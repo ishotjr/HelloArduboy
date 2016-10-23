@@ -37,9 +37,19 @@ void loop() {
 
   // move text diagonally across the screen (looping at limits)
   arduboy.setCursor(x++, y++);
+
+  //arduboy.fillCircle(x - 8, y, 4, WHITE);
+
   arduboy.print("LOOK AROUND YOU");
+
   arduboy.display();
 
+  arduboy.setRGBled((arduboy.width() - x) * (255 / arduboy.width()), 
+    (arduboy.height() - y) * (255 / arduboy.height()), 0);
+    //(x + y) * (255 / (arduboy.width() + arduboy.height())));
+
+  arduboy.tunes.tone((arduboy.width() - x) + (arduboy.height() - y) * 10, 1000 / 60);
+    
   if (y > arduboy.height()) {
     y = 0;
     //x = arduboy.height();
