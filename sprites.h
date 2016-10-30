@@ -1,4 +1,7 @@
-const uint8_t PROGMEM sprites[][32] = {
+#define SPRITE_SIZE 16
+
+// size is SPRITE_SIZE * SPRITE_SIZE / 8 bits per uint8_t
+const uint8_t PROGMEM sprites[][SPRITE_SIZE * SPRITE_SIZE / 8] = {
   {
     // inverted
     0x00, 0x00, 0x00, 0x00, 0x1c, 0xbe, 0xee, 0xae, 0x8c, 0x48, 0x20, 0x18, 0x18, 0x00, 0x00, 0x00,

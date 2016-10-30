@@ -14,6 +14,8 @@
 #include <Arduboy.h>
 #include "sprites.h"
 
+#define DEBUG true
+
 #define MAX_VELOCITY 5
 
 Arduboy arduboy;
@@ -89,10 +91,18 @@ void loop() {
 
   //arduboy.print("LOOK AROUND YOU");
   if (arduboy.everyXFrames(2)) {
-    arduboy.drawBitmap(x_position, y_position, sprites[1], 16, 16, WHITE);
+    arduboy.drawBitmap(x_position, y_position, sprites[1], SPRITE_SIZE, SPRITE_SIZE, WHITE);
   } else {
-    arduboy.drawBitmap(x_position, y_position, sprites[0], 16, 16, WHITE);    
+    arduboy.drawBitmap(x_position, y_position, sprites[0], SPRITE_SIZE, SPRITE_SIZE, WHITE);    
   }
+
+#if DEBUG
+  // font is 6x8
+  arduboy.setCursor(arduboy.width() - 3*8, 0); // font is 8px high
+  arduboy.print(x_position, DEC);
+  arduboy.setCursor(arduboy.width() - 3*8, arduboy.height() - 8);
+  arduboy.print(y_position, DEC);
+#endif
 
   arduboy.display();
 
@@ -110,19 +120,19 @@ void loop() {
   }
     
   if (y_position > arduboy.height()) {
-    y_position = 0;
+    // start offscreen vs. appearing entirely on-screen
+    y_position = -1 * SPRITE_SIZE;
     //x_position = arduboy.height();
-  } else if (y_position < (-1 * arduboy.height())) {
+  } else if (y_position < (-1 * SPRITE_SIZE)) {
     // loop back the other way too!
-    // TODO: w/b better if comparison was to text height
     y_position = arduboy.height();
   }
-  if (x_position > arduboy.width()) {
-    x_position = 0 - arduboy.width();
-  } else if (x_position < (-1 * arduboy.width())) {
+  // note comparison to (x_velocity + 1) to prevent/correct overflow (range of int8_t is only 127)
+  if (x_position > (arduboy.width() - (x_velocity + 1))) {
+    x_position = -1 * SPRITE_SIZE;
+  } else if (x_position < (-1 * SPRITE_SIZE)) {
     // loop back the other way too!
-    // TODO: w/b better if comparison was to text width
-    x_position = arduboy.width();
+    x_position = arduboy.width() - 1; // prevent overflow
   }
 
 }
