@@ -35,6 +35,8 @@ void setup() {
   // clear screen/boot logo
   arduboy.clear();
 
+  drawLevel();
+
   // slow it waaaay down to G&W speed!
   arduboy.setFrameRate(1);
 }
@@ -48,6 +50,8 @@ void loop() {
 
   // clear buffer
   arduboy.clear();
+
+  drawLevel();
 
   // input
   // TODO: some kind of de-bounce or smoothing?!
@@ -123,6 +127,13 @@ void loop() {
   }
 
 
+
+  x_position = x_position + x_velocity;
+  y_position = y_position + y_velocity;
+  arduboy.setCursor(x_position, y_position);
+
+
+
   // ease to a stop horizontally if no input for 3 frames
   if (no_movement > 2) {
     // TODO: refactor?
@@ -135,7 +146,21 @@ void loop() {
 
   // gravity
   // *prevent fall-through due to velocity
-  if (y_position < (arduboy.height() - SPRITE_SIZE - y_velocity)) {
+
+  // TODO: refactor!!!
+  // check for platform - feet are only middle 10/16 pixels
+  if ((arduboy.getPixel(x_position + 3, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 4, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 5, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 6, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 7, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 8, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 9, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 10, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 11, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE) ||
+      (arduboy.getPixel(x_position + 12, y_position + SPRITE_SIZE + y_velocity + 1) == WHITE)) {
+    y_velocity = 0;
+  } else if (y_position < (arduboy.height() - SPRITE_SIZE - y_velocity)) {
     y_velocity++;
     if (y_velocity > MAX_FREEFALL) {
       y_velocity = MAX_FREEFALL;
@@ -143,10 +168,6 @@ void loop() {
   } else {
     y_velocity = 0;
   }
-
-  x_position = x_position + x_velocity;
-  y_position = y_position + y_velocity;
-  arduboy.setCursor(x_position, y_position);
 
 
   // only animate if in motion
@@ -187,4 +208,9 @@ void loop() {
 
 }
 
-
+void drawLevel() {
+  arduboy.fillRect(20, arduboy.height() - 8, 12, MAX_FREEFALL, WHITE);
+  arduboy.fillRect(36, arduboy.height() - 16, 12, MAX_FREEFALL, WHITE);
+  arduboy.fillRect(52, arduboy.height() - 24, 12, MAX_FREEFALL, WHITE);
+  arduboy.fillRect(68, arduboy.height() - 32, 12, MAX_FREEFALL, WHITE);
+}
